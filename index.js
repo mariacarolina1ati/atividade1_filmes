@@ -4,7 +4,9 @@ import mysql from "mysql2"
 
 const app = express()
 app.use(express.json())
+
 app.use(cors())
+
 
 const database = mysql.createPool({
     host: "benserverplex.ddns.net",
@@ -14,7 +16,17 @@ const database = mysql.createPool({
 })
 
 app.get("/", (request,response) => {
-    response.json({ message:"Backend funfano" })
+    const selectCommand = "SELECT * FROM filmes_MariaCarolina_Joao"
+
+    database.query(selectCommand, (err, filmes) => {
+        if (err) {
+            console.log(err)
+            response.json({ message: "Erro ao buscar filmes" })
+            return
+        }
+
+        response.json(filmes)
+    })
 })
 
 app.post("/adicionar-filme", (request, response) => {
@@ -81,3 +93,4 @@ app.delete("/deletar-filme/:id", (request, response) => {
 app.listen(3000, () => {
     console.log("Servidor rodando em http://localhost:3000")
 })
+
